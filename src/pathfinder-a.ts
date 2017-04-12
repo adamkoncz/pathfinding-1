@@ -1,38 +1,22 @@
+export class Path {
+    private arr: Array<iWaypoint>;
 
-interface Waypoint{
-    id: number | string, 
-    waypoints:Array< number | string>,
-    x:number, 
-    y:number, 
-    z:number
-}
+    constructor(arr: Array<iWaypoint>) {
+        this.arr = arr;
+    }
 
-(function (name, context, definition) {
-    if (typeof context.module != 'undefined' && context.module.exports)
-        context.module.exports = definition();
-    else if (typeof context.define == 'function' && context.define.amd)
-        context.define(name, definition);
-    else
-        context[name] = definition();
-})('pathfinderA', this, function () {
+    public find(from: number | string, to: number | string): { steps: Array<iWaypoint>, distance: number } {
+        var p1: iWaypoint = this.get_by_id(this.arr, from),
+            p2: iWaypoint = this.get_by_id(this.arr, to);
 
-    function _find(arr: Array<Waypoint>, id1:  number | string, id2:  number | string) {
-        var p1 = get_by_id(arr, id1),
-            p2 = get_by_id(arr, id2),
-            tries = [], result, neighbor;
-      
-        result = A(arr, p1, p2);
-        
-        //transform result
-
-        return result;
+        return A(this.arr, p1, p2);
 
         function A(arr, start, goal) {
             // The set of nodes already evaluated.
-            var closedSet = [],
+            var closedSet: Array<iWaypoint> = [],
                 // The set of currently discovered nodes still to be evaluated.
                 // Initially, only the start node is known.
-                openSet = [start],
+                openSet: Array<iWaypoint> = [start],
                 // For each node, which node it can most efficiently be reached from.
                 // If a node can be reached from many nodes, cameFrom will eventually contain the
                 // most efficient previous step.
@@ -42,10 +26,12 @@ interface Waypoint{
                 // For each node, the total cost of getting from the start node to the goal
                 // by passing by that node. That value is partly known, partly heuristic.
                 fScore = {},
+                i: number,
+                tentative_gScore: number,
+                neighbor: iWaypoint,
+                current: iWaypoint;
 
-                i, tentative_gScore, current;
-
-            arr.forEach(function (el) {
+            arr.forEach(function (el: iWaypoint) {
                 gScore[el.id] = Infinity;
                 fScore[el.id] = Infinity;
             });
@@ -66,17 +52,17 @@ interface Waypoint{
                 remove(openSet, current);
                 add(closedSet, current);
 
-                for (i = 0; i < current.waypoints.length; i++) {
+                for (i = 0; i < current.connections.length; i++) {
 
-                    neighbor = get_by_id(arr, current.waypoints[i]);
+                    neighbor = this.get_by_id(arr, current.connections[i]);
 
-                    if (in_arr(closedSet, neighbor)) {
+                    if (this.in_arr(closedSet, neighbor)) {
                         continue; //continue the loop. ignore neighbors that are already evaluated
                     }
 
                     tentative_gScore = gScore[current.id] + distance(current, neighbor);
 
-                    if (!in_arr(openSet, neighbor)) {
+                    if (!this.in_arr(openSet, neighbor)) {
                         add(openSet, neighbor);
                     } else if (tentative_gScore >= gScore[neighbor.id]) {
                         continue;
@@ -89,9 +75,9 @@ interface Waypoint{
 
             }
 
-            return false;
+            return null;
 
-            function reconstruct_path(cameFrom, current) {
+            function reconstruct_path(cameFrom, current: iWaypoint) {
                 var total_path = [current],
                     distance = gScore[current.id];
 
@@ -105,7 +91,7 @@ interface Waypoint{
                 };
             }
 
-            function remove(arr, el) {
+            function remove(arr: Array<iWaypoint>, el: iWaypoint): void {
                 var i;
                 for (i = 0; i < arr.length; i++) {
                     if (arr[i].id == el.id) {
@@ -113,7 +99,7 @@ interface Waypoint{
                     }
                 }
             }
-            function add(arr, el) {
+            function add(arr: Array<iWaypoint>, el: iWaypoint): void {
                 var b = false;
                 arr.forEach(function (el2) {
                     if (el2.id == el.id) {
@@ -125,15 +111,15 @@ interface Waypoint{
                 }
             }
 
-            function heuristic_cost_estimate(a, b) {
+            function heuristic_cost_estimate(a: iWaypoint, b: iWaypoint): number {
                 return distance(a, b) * 1.5;
             }
 
-            function distance(a, b) {
+            function distance(a: iWaypoint, b: iWaypoint): number {
                 return Math.sqrt(Math.pow((b.x - a.x), 2) + Math.pow((b.y - a.y), 2));
             }
 
-            function get_lowest_score_in_openSet() {
+            function get_lowest_score_in_openSet(): iWaypoint {
                 if (!openSet.length) return null;
                 if (openSet.length == 1) return openSet[0];
 
@@ -144,25 +130,22 @@ interface Waypoint{
             }
         }
 
-        function in_arr(arr, el) {
-            var a = get_by_id(arr, el.id);
-
-            return a ? true : false;
-        }
-
-        function get_by_id(arr, id) {
-            var r = arr.filter(function (el) {
-                return (el.id == id);
-            });
-
-            return r.length ? r[0] : null;
-        }
     }
 
-    return {
-        find: _find
-    }
-});
 
+    private in_arr(arr: Array<iWaypoint>, el: iWaypoint): boolean {
+        var a = this.get_by_id(arr, el.id);
+
+        return a ? true : false;
+    }
+
+    private get_by_id(arr: Array<iWaypoint>, id: string | number): iWaypoint {
+        var r = arr.filter(function (el) {
+            return (el.id == id);
+        });
+
+        return r.length ? r[0] : null;
+    }
+}
 
 
