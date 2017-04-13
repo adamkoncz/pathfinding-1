@@ -26,7 +26,6 @@ export class Path {
                 // For each node, the total cost of getting from the start node to the goal
                 // by passing by that node. That value is partly known, partly heuristic.
                 fScore = {},
-                i: number,
                 tentative_gScore: number,
                 neighbor: iWaypoint,
                 current: iWaypoint;
@@ -52,7 +51,7 @@ export class Path {
                 remove(openSet, current);
                 add(closedSet, current);
 
-                for (i = 0; i < current.connections.length; i++) {
+                for (let i = 0; i < current.connections.length; i++) {
 
                     neighbor = this.get_by_id(arr, current.connections[i]);
 
@@ -83,7 +82,7 @@ export class Path {
 
                 while (current && cameFrom[current.id]) {
                     current = cameFrom[current.id];
-                    total_path.unshift(current); //should it be total_path.push(current)
+                    total_path.unshift(current); 
                 }
                 return {
                     steps: total_path,
