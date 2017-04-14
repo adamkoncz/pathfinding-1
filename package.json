@@ -4,6 +4,7 @@
     "private": true,
     "devDependencies": {
         "gulp": "*",
-        "gulp-concat": "*"
+        "gulp-uglify":"*",
+        "gulp-rename":"*"
     }
 }

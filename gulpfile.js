@@ -1,17 +1,30 @@
 var gulp = require('gulp'),
-    exec = require('child_process').exec,
-    path = require('path')
+    uglify = require('gulp-uglify'),
+    rename = require('gulp-rename'),
+    exec = require('child_process').execSync,
+    path = require('path');
 
 
 //copy .ts into ./dist
 gulp.task('make-ts', function (callback) {
-    exec('tsc -p .', function (err, stdout, stderr) {
-        console.log(stdout);
-        console.log(stderr);
-        callback(err);
-    });
+    var error;
+    try{
+        exec('tsc -p .');
+    }catch(err){
+       error = err;
+    }
+    callback();
+    
 });
 
-gulp.task('build', ['make-ts'], function () {
+gulp.task('uglify', function(){
+        gulp.src(['./dist/**/*.js', '!./dist/**/*.min.js'])
+        .pipe(uglify())
+        .pipe(rename({ suffix: '.min' }))
+        .pipe(gulp.dest('./dist'));
+});
+
+gulp.task('build', ['make-ts','uglify'], function () {
     //do stuff here  
+    console.log('BUILD DONE')
 });

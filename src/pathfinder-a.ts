@@ -1,3 +1,7 @@
+type StrIndex<TValue> = {
+    [key: string]: TValue
+}
+
 export class Path {
     private arr: Array<iWaypoint>;
 
@@ -6,8 +10,8 @@ export class Path {
     }
 
     public find(from: number | string, to: number | string): { steps: Array<iWaypoint>, distance: number } {
-        var p1: iWaypoint = this.get_by_id(this.arr, from),
-            p2: iWaypoint = this.get_by_id(this.arr, to);
+        var p1: iWaypoint = get_by_id(this.arr, from),
+            p2: iWaypoint = get_by_id(this.arr, to);
 
         return A(this.arr, p1, p2);
 
@@ -20,12 +24,12 @@ export class Path {
                 // For each node, which node it can most efficiently be reached from.
                 // If a node can be reached from many nodes, cameFrom will eventually contain the
                 // most efficient previous step.
-                cameFrom = {},
+                cameFrom:StrIndex<iWaypoint> = {},
                 // For each node, the cost of getting from the start node to that node.
-                gScore = {},
+                gScore:StrIndex<number>  = {},
                 // For each node, the total cost of getting from the start node to the goal
                 // by passing by that node. That value is partly known, partly heuristic.
-                fScore = {},
+                fScore:StrIndex<number> = {},
                 tentative_gScore: number,
                 neighbor: iWaypoint,
                 current: iWaypoint;
@@ -53,15 +57,15 @@ export class Path {
 
                 for (let i = 0; i < current.connections.length; i++) {
 
-                    neighbor = this.get_by_id(arr, current.connections[i]);
+                    neighbor = get_by_id(arr, current.connections[i]);
 
-                    if (this.in_arr(closedSet, neighbor)) {
+                    if (in_arr(closedSet, neighbor)) {
                         continue; //continue the loop. ignore neighbors that are already evaluated
                     }
 
                     tentative_gScore = gScore[current.id] + distance(current, neighbor);
 
-                    if (!this.in_arr(openSet, neighbor)) {
+                    if (!in_arr(openSet, neighbor)) {
                         add(openSet, neighbor);
                     } else if (tentative_gScore >= gScore[neighbor.id]) {
                         continue;
@@ -82,7 +86,7 @@ export class Path {
 
                 while (current && cameFrom[current.id]) {
                     current = cameFrom[current.id];
-                    total_path.unshift(current); 
+                    total_path.unshift(current);
                 }
                 return {
                     steps: total_path,
@@ -129,22 +133,24 @@ export class Path {
             }
         }
 
+        function in_arr(arr: Array<iWaypoint>, el: iWaypoint): boolean {
+            var a = this.get_by_id(arr, el.id);
+
+            return a ? true : false;
+        }
+
+        function get_by_id(arr: Array<iWaypoint>, id: string | number): iWaypoint {
+            var r = arr.filter(function (el) {
+                return (el.id == id);
+            });
+
+            return r.length ? r[0] : null;
+        }
+
     }
 
 
-    private in_arr(arr: Array<iWaypoint>, el: iWaypoint): boolean {
-        var a = this.get_by_id(arr, el.id);
-
-        return a ? true : false;
-    }
-
-    private get_by_id(arr: Array<iWaypoint>, id: string | number): iWaypoint {
-        var r = arr.filter(function (el) {
-            return (el.id == id);
-        });
-
-        return r.length ? r[0] : null;
-    }
+    
 }
 
 
