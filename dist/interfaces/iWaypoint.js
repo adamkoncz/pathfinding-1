@@ -1,1 +1,0 @@
-//# sourceMappingURL=iWaypoint.js.map

@@ -2,6 +2,14 @@ type StrIndex<TValue> = {
     [key: string]: TValue
 }
 
+interface iWaypoint{
+    id: number | string;
+    connections:Array< number | string>;
+    x:number;
+    y:number; 
+    z:number;
+}
+
 export class Path {
     private arr: Array<iWaypoint>;
 
