@@ -83,7 +83,7 @@
                     return distance(a, b) * 1.5;
                 }
                 function distance(a, b) {
-                    return Math.sqrt(Math.pow((b.x - a.x), 2) + Math.pow((b.y - a.y), 2));
+                    return Math.sqrt(Math.pow((b.x - a.x), 2) + Math.pow((b.y - a.y), 2) + Math.pow((b.z - a.z), 2));
                 }
                 function get_lowest_score_in_openSet() {
                     if (!openSet.length)
@@ -97,7 +97,7 @@
                 }
             }
             function in_arr(arr, el) {
-                var a = this.get_by_id(arr, el.id);
+                var a = get_by_id(arr, el.id);
                 return a ? true : false;
             }
             function get_by_id(arr, id) {
