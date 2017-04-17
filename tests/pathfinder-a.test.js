@@ -11,7 +11,7 @@ test_data.push({ id:'E', connections:['C', 'G'], x:4, y:0, z:0 });
 test_data.push({ id:'F', connections:['D', 'Z'], x:5, y:1, z:0 });
 test_data.push({ id:'G', connections:['E'], x:6, y:0, z:0 });
 
-test_data.push({ id:'X', connections:[], x:100, y:00, z:0 });
+test_data.push({ id:'X', connections:[], x:100, y:100, z:0 });
 
 test_data.push({ id:'Z', connections:['F'], x:8, y:1, z:0 });
 
@@ -20,7 +20,7 @@ describe('pathfinderA',function(){
 
         var p = new pathfinder.Path(test_data),
         route = p.find('A', 'X');
-        chai.expect(route).to.equal(null)
+        chai.expect(route).to.equal(null);
        
     });
 
