@@ -95,6 +95,9 @@ export class Path {
                     distance = gScore[current.id];
 
                 while (current && cameFrom[current.id]) {
+                    //NOTE: Try and add angles and metadata to cameFrom
+                    
+                    //
                     current = cameFrom[current.id];
                     total_path.unshift(current);
                 }

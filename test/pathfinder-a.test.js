@@ -1,7 +1,10 @@
 var pathfinder = require('../dist/pathfinder-a.min.js'),
 chai = require('chai'),
+assert = require('assert'),
 should = chai.should(),
- test_data = [];
+expect = chai.expect,
+ test_data = [];//,
+ ///describe;
 
 test_data.push({ id:'A', connections:['B', 'C'], x:0, y:0, z:0 });
 test_data.push({ id:'B', connections:['A', 'D'], x:1, y:1, z:0 });
