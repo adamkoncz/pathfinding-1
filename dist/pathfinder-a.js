@@ -50,14 +50,20 @@
                 }
                 return null;
                 function reconstruct_path(cameFrom, current) {
-                    var total_path = [current], distance = gScore[current.id];
+                    var total_path = [current], dist = gScore[current.id], previous;
                     while (current && cameFrom[current.id]) {
-                        current = cameFrom[current.id];
+                        previous = cameFrom[current.id];
+                        previous.magnitude = distance(current, previous);
+                        previous.direction = direction(previous, current);
+                        if (current.direction != undefined) {
+                            previous.deviation = current.direction - previous.direction;
+                        }
+                        current = previous;
                         total_path.unshift(current);
                     }
                     return {
                         steps: total_path,
-                        distance: distance
+                        distance: dist
                     };
                 }
                 function remove(arr, el) {
@@ -84,6 +90,12 @@
                 }
                 function distance(a, b) {
                     return Math.sqrt(Math.pow((b.x - a.x), 2) + Math.pow((b.y - a.y), 2) + Math.pow((b.z - a.z), 2));
+                }
+                function direction(a, b) {
+                    var x = b.x - a.x, y = b.y - a.y, rad, t;
+                    rad = Math.atan(y / x);
+                    t = rad * (180 / Math.PI);
+                    return t;
                 }
                 function get_lowest_score_in_openSet() {
                     if (!openSet.length)

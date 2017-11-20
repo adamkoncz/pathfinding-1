@@ -2,22 +2,25 @@ type StrIndex<TValue> = {
     [key: string]: TValue
 }
 
-interface iWaypoint{
+interface iWaypoint {
     id: number | string;
-    connections:Array< number | string>;
-    x:number;
-    y:number; 
-    z:number;
+    connections: Array<number | string>;
+    x: number;
+    y: number;
+    z: number;
+    magnitude: number;
+    direction: number;
+    deviation: number;
 }
 
 export class Path {
     constructor(arr: Array<iWaypoint>) {
         this.arr = arr;
     }
-    
+
     private arr: Array<iWaypoint>;
 
-    
+
 
     public find(from: number | string, to: number | string): { steps: Array<iWaypoint>, distance: number } {
         var p1: iWaypoint = get_by_id(this.arr, from),
@@ -34,12 +37,12 @@ export class Path {
                 // For each node, which node it can most efficiently be reached from.
                 // If a node can be reached from many nodes, cameFrom will eventually contain the
                 // most efficient previous step.
-                cameFrom:StrIndex<iWaypoint> = {},
+                cameFrom: StrIndex<iWaypoint> = {},
                 // For each node, the cost of getting from the start node to that node.
-                gScore:StrIndex<number>  = {},
+                gScore: StrIndex<number> = {},
                 // For each node, the total cost of getting from the start node to the goal
                 // by passing by that node. That value is partly known, partly heuristic.
-                fScore:StrIndex<number> = {},
+                fScore: StrIndex<number> = {},
                 tentative_gScore: number,
                 neighbor: iWaypoint,
                 current: iWaypoint;
@@ -90,20 +93,28 @@ export class Path {
 
             return null;
 
+            //NOTE: we reconstruct backward. Current is the last step.
             function reconstruct_path(cameFrom, current: iWaypoint) {
                 var total_path = [current],
-                    distance = gScore[current.id];
+                    dist = gScore[current.id],
+                    previous: iWaypoint;
 
                 while (current && cameFrom[current.id]) {
+                    previous = cameFrom[current.id];
                     //NOTE: Try and add angles and metadata to cameFrom
-                    
+                    previous.magnitude = distance(current, previous);
+                    previous.direction = direction(previous, current);
+
+                    if (current.direction != undefined) {
+                        previous.deviation = current.direction - previous.direction;
+                    }
                     //
-                    current = cameFrom[current.id];
+                    current = previous;
                     total_path.unshift(current);
                 }
                 return {
                     steps: total_path,
-                    distance: distance
+                    distance: dist
                 };
             }
 
@@ -135,6 +146,18 @@ export class Path {
                 return Math.sqrt(Math.pow((b.x - a.x), 2) + Math.pow((b.y - a.y), 2) + Math.pow((b.z - a.z), 2));
             }
 
+            function direction(a: iWaypoint, b: iWaypoint): number {
+                var x = b.x - a.x,
+                    y = b.y - a.y,
+                    rad: number, t;
+
+                rad = Math.atan(y / x);
+
+                t = rad * (180 / Math.PI);
+
+                return t;
+            }
+
             function get_lowest_score_in_openSet(): iWaypoint {
                 if (!openSet.length) return null;
                 if (openSet.length == 1) return openSet[0];
@@ -163,7 +186,7 @@ export class Path {
     }
 
 
-    
+
 }
 
 
