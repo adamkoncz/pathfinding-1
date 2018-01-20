@@ -106,7 +106,7 @@ export class Path {
                     previous.direction = direction(previous, current);
 
                     if (current.direction != undefined) {
-                        previous.deviation = current.direction - previous.direction;
+                        current.deviation = current.direction - previous.direction;
                     }
                     //
                     current = previous;
